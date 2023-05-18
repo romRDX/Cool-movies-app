@@ -7,7 +7,7 @@ import {
 } from '@mui/material';
 import { useAppDispatch, moviesActions } from '../../redux';
 
-import { Movie } from '../../types';
+import { Movie, Review } from '../../types';
 
 interface MovieItemProps {
   data: Movie,
@@ -21,7 +21,7 @@ const MovieItem = ({ data }: MovieItemProps) => {
   const [reviewTitle, setReviewTitle] = useState<string>("");
   const [reviewBody, setReviewBody] = useState<string>("");
   const [reviewRating, setReviewRating] = useState<number>(0);
-  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [editingReviewId, setEditingReviewId] = useState<string | null>(null);
 
   const handleAddReview = () => {
     
@@ -33,12 +33,40 @@ const MovieItem = ({ data }: MovieItemProps) => {
     }}));
 
     setReviewTitle("");
+    setReviewRating(0);
     setReviewBody("");
   }
 
-  const handleEditReview = (reviewId: string) => {
-    // dispatch(moviesActions.editReview({ data: { reviewId, movieId: data.id, newReviewText: "TEST EDIT" } }));
+  const handleStartEditingReview = (reviewData: Review) => {
+    setEditingReviewId(reviewData.id);
+    setReviewTitle(reviewData.title);
+    setReviewBody(reviewData.body);
+    setReviewRating(reviewData.rating);
   }
+
+  const handleCancelEditReview = () => {
+    setEditingReviewId(null);
+    setReviewTitle("");
+    setReviewBody("");
+    setReviewRating(0);
+  }
+
+  const handleEditReview = () => {
+
+    dispatch(moviesActions.editReview({ data: {
+      id: editingReviewId,
+      title: reviewTitle,
+      body: reviewBody,
+      rating: reviewRating,
+      movieId: data.id,
+    }}));
+
+    setReviewTitle("");
+    setReviewRating(0);
+    setReviewBody("");
+  }
+
+  
 
   return (
     <div key={data.id} css={styles.container}>
@@ -58,7 +86,7 @@ const MovieItem = ({ data }: MovieItemProps) => {
                     <p>{review.userByUserReviewerId.name}</p>
                     <p>{review.title}</p>
                     <p>rating: {review.rating}</p>
-                    <Button onClick={() => handleEditReview(review.id)} css={styles.reviewEditButton}>
+                    <Button onClick={() => handleStartEditingReview(review)} css={styles.reviewEditButton}>
                       <img width="30" src="/edit.svg" />
                     </Button>
                   </div>
@@ -107,12 +135,33 @@ const MovieItem = ({ data }: MovieItemProps) => {
               setReviewBody(event.target.value);
             }}
           />
-          <Button 
-            variant={'outlined'}
-            onClick={() => handleAddReview()}
-          >
-            Add Review
-          </Button>
+          {
+            editingReviewId ? 
+            <>
+              <Button 
+                variant={'outlined'}
+                onClick={handleEditReview}
+              >
+                Finish editing
+              </Button>
+              <Button 
+                variant={'outlined'}
+                onClick={handleCancelEditReview}
+                css={styles.cancelButton}
+              >
+                Cancel
+              </Button>
+            </>
+            :
+            <Button 
+              variant={'outlined'}
+              onClick={() => handleAddReview()}
+            >
+              Add Review
+            </Button>
+          }
+          
+          
         </div>
       </div>
     </div>
@@ -139,7 +188,7 @@ const styles = {
   reviewContainer: css({
     display: "flex",
     flexDirection: "column",
-    margin: "40px 0 0 15px",
+    margin: "auto 0 0 15px",
   }),
   reviewList: css({
     overflowY: "scroll",
@@ -159,6 +208,9 @@ const styles = {
   }),
   reviewEditButton: css({
     marginLeft: "auto",
+  }),
+  cancelButton: css({
+    marginTop: "15px",
   }),
   dataInput: css({
     alignSelf: 'stretch',

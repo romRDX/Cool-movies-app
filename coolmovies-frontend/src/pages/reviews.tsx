@@ -22,7 +22,7 @@ const Home: NextPage = () => {
     dispatch(moviesActions.fetch());
   }, [dispatch]);
 
-  console.log("ASD: ", moviesData.moviesList);
+  // console.log("ASD: ", moviesData.moviesList);
 
   return (
     <div css={styles.root}>

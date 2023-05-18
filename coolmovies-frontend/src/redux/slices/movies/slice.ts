@@ -75,7 +75,23 @@ export const slice = createSlice({
 
       state.moviesList = newMoviesList;
     },
-    editReview: (state, action: PayloadAction<{ data: unknown[] }>) => {
+    editReview: (state, action: PayloadAction<{ data: {
+      id: string,
+      title: string,
+      body: string,
+      rating: number,
+      movieId: string,
+      userReviewerId: string,
+    }}>) => {
+      
+    },
+    updateReview: (state, action: PayloadAction<{ data: {
+      id: string,
+      title: string,
+      body: string,
+      rating: number,
+      movieId: string,
+    }}>) => {
       
     },
     test: (state, action: PayloadAction<{ data: any }>) => {

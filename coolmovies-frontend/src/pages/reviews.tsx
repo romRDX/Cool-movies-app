@@ -19,23 +19,10 @@ const Home: NextPage = () => {
   const moviesData = useAppSelector((state) => state.movies);
 
   useEffect(() => {
-    // dispatch(
-    //   exampleState.fetchData
-    //     ? exampleActions.clearData()
-    //     : exampleActions.fetch()
-    // )
-
     dispatch(moviesActions.fetch());
-    dispatch(moviesActions.test({ id: 1 }));
   }, [dispatch]);
 
-  // dispatch(
-  //   exampleState.fetchData
-  //     ? exampleActions.clearData()
-  //     : exampleActions.fetch()
-  // )
-
-  // console.log("ASD: ", moviesData.moviesList);
+  console.log("ASD: ", moviesData.moviesList);
 
   return (
     <div css={styles.root}>
@@ -48,10 +35,7 @@ const Home: NextPage = () => {
           {'Coolmovies Reviews'}
         </Typography>
 
-        <div css={styles.mainControls}>
-
-        </div>
-        <div>
+        <div css={styles.content}>
           {
             moviesData && moviesData.moviesList.map((data) => (
               <MovieItem data={data} key={data.id} />
@@ -89,6 +73,14 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
+    
+  }),
+  content: css({
+    width: "100%",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    marginTop: "20px",
   }),
   heading: css({ marginTop: 16, fontSize: '2.75rem', textAlign: 'center' }),
   subtitle: css({

@@ -19,18 +19,61 @@ export const slice = createSlice({
     },
     loaded: (state, action: PayloadAction<{ data: unknown[] }>) => {
       
-      const normalizedData = action.payload.data.allMovies.nodes.map((movieItem) => ({
-        ...movieItem,
-        reviews: movieItem.movieReviewsByMovieId.edges.map((reviewItem) => ({ ...reviewItem.node }))
-      }))
-      // console.log("ASD: ", normalizedData);
+      const normalizedData = action.payload.data.allMovies.nodes.map((movieItem) => {
+        const normalizedMovie = {
+          ...movieItem,
+          reviews: movieItem.movieReviewsByMovieId.edges.map((reviewItem) => ({ ...reviewItem.node }))
+        }
+
+        delete normalizedMovie.movieReviewsByMovieId;
+
+        return normalizedMovie;
+      })
+      
       state.moviesList = normalizedData;
     },
     loadError: (state) => {
       state.moviesList = ['Error Fetching :('];
     },
-    addReview: (state, action: PayloadAction<{ data: unknown[] }>) => {
-      
+    createReview: (state, action: PayloadAction<{ data: {
+      title: string,
+      body: string,
+      rating: number,
+      movieId: string,
+    }}>) => {
+      console.log("TTT: ", action.payload.data.title);
+    },
+    addReview: (state, action: PayloadAction<{ data: {
+      id: string,
+      title: string,
+      body: string,
+      rating: number,
+      movieId: string,
+      userReviewerId: string,
+      userReviewerName: string,
+    }}>) => {
+      const newMoviesList = state.moviesList.map((movie) => {
+        if(movie.id === action.payload.data.movieId){
+          return {
+            ...movie,
+            reviews: [ ...movie.reviews, {
+              id: action.payload.data.id,
+              body: action.payload.data.body,
+              movieId: action.payload.data.movieId,
+              rating: action.payload.data.rating,
+              title: action.payload.data.title,
+              userByUserReviewerId: {
+                id: action.payload.data.userReviewerId,
+                name: action.payload.data.userReviewerName
+              }
+            }]
+          }
+        } else {
+          return movie;
+        }
+      });
+
+      state.moviesList = newMoviesList;
     },
     editReview: (state, action: PayloadAction<{ data: unknown[] }>) => {
       

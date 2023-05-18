@@ -3,4 +3,4 @@ export { default as moviesReducer } from './slice';
 import { combineEpics } from 'redux-observable';
 import { moviesEpic, getMoviesAsyncEpic, addMovieReviewsAsyncEpic } from './epics';
 
-export const moviesEpics = combineEpics(moviesEpic, getMoviesAsyncEpic, addMovieReviewsAsyncEpic);
+export const moviesEpics = combineEpics( getMoviesAsyncEpic, addMovieReviewsAsyncEpic);

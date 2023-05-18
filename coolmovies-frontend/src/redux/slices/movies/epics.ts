@@ -21,11 +21,12 @@ export const getMoviesAsyncEpic: Epic = (
   { client }: EpicDependencies
   ) => action$.pipe(
     filter(actions.fetch.match),
-    switchMap(async () => {
+    switchMap(async (x) => {
       try {
         const result = await client.query({
           query: getMoviesQuery,
         });
+        
         return actions.loaded({ data: result.data });
       } catch (err) {
         return actions.loadError();
@@ -34,37 +35,42 @@ export const getMoviesAsyncEpic: Epic = (
   );
 
 export const addMovieReviewsAsyncEpic: Epic = (
-  action$: Observable<SliceAction['test']>,
+  action$: Observable<SliceAction['createReview']>,
   state$: StateObservable<RootState>,
   { client }: EpicDependencies
   ) => action$.pipe(
-    filter(actions.test.match),
-    switchMap(async () => {
+    filter(actions.createReview.match),
+    switchMap(async (response) => {
       try {
-        // const result = await client.query({
-        //   query: getMoviesQuery,
-          
-        // });
-        console.log("foi-1: ", actions);
-        console.log("foi-2: ", states);
+        
         const id = uuidv4();
+        const reviewerId = "5f1e6707-7c3a-4acd-b11f-fd96096abd5a";
         const result = await client.mutate({
           mutation: mutation,
-          variables: { input: {
-            clientMutationId: uuidv4(),
-            movieReview: {
-              id: uuidv4(),
-              title: "new title",
-              body: "new body",
-              rating: 3,
-              movieId: uuidv4(),
-              userReviewerId: uuidv4(),
+          variables: {
+            input: {
+              clientMutationId: "123",
+              movieReview: {
+                id,
+                title: response.payload.data.title,
+                body: response.payload.data.body,
+                rating: response.payload.data.rating,
+                movieId: response.payload.data.movieId,
+                userReviewerId: reviewerId,
+              }
             }
-          }}
-          
+          }
         });
 
-        return actions.loaded({ data: result.data });
+        return actions.addReview({ data: {
+          id,
+          title: response.payload.data.title,
+          body: response.payload.data.body,
+          rating: response.payload.data.rating,
+          movieId: response.payload.data.movieId,
+          userReviewerId: reviewerId,
+          userReviewerName: result.data.createMovieReview.userByUserReviewerId.name
+        }});
       } catch (err) {
         return actions.loadError();
       }
@@ -72,8 +78,8 @@ export const addMovieReviewsAsyncEpic: Epic = (
   );
 
   const mutation = gql`
-  mutation createMovieReview {
-    createMovieReview {
+  mutation createMovieReview($input: CreateMovieReviewInput!) {
+    createMovieReview(input: $input) {
       clientMutationId
       movieReview {
         id
@@ -83,6 +89,7 @@ export const addMovieReviewsAsyncEpic: Epic = (
       }
       userByUserReviewerId {
         id
+        name
       }
     }
   }
@@ -113,6 +120,7 @@ const getMoviesQuery = gql`
               rating
               movieId
               userByUserReviewerId {
+                id
                 name
               }
             }

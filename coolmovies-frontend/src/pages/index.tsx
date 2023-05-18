@@ -14,11 +14,11 @@ import Link from 'next/link';
 const primary = '#1976d2';
 
 const Home: NextPage = () => {
-  const dispatch = useAppDispatch();
+  // const dispatch = useAppDispatch();
 
-  dispatch(
-    moviesActions.fetch()
-  )
+  // dispatch(
+  //   moviesActions.fetch()
+  // )
 
   return (
     <div css={styles.root}>

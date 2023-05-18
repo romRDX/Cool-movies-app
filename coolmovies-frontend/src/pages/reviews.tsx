@@ -1,3 +1,4 @@
+import React, { useEffect } from "react";
 import { css } from '@emotion/react';
 import {
   Button,
@@ -8,17 +9,33 @@ import {
   Zoom,
 } from '@mui/material';
 import type { NextPage } from 'next';
-import { moviesActions, useAppDispatch, useAppSelector } from '../redux';
-import Link from 'next/link';
+import { useAppDispatch, useAppSelector, moviesActions } from '../redux';
+import MovieItem from "../components/movieReviewItem/movieReviewItem";
 
 const primary = '#1976d2';
 
 const Home: NextPage = () => {
   const dispatch = useAppDispatch();
+  const moviesData = useAppSelector((state) => state.movies);
 
-  dispatch(
-    moviesActions.fetch()
-  )
+  useEffect(() => {
+    // dispatch(
+    //   exampleState.fetchData
+    //     ? exampleActions.clearData()
+    //     : exampleActions.fetch()
+    // )
+
+    dispatch(moviesActions.fetch());
+    dispatch(moviesActions.test({ id: 1 }));
+  }, [dispatch]);
+
+  // dispatch(
+  //   exampleState.fetchData
+  //     ? exampleActions.clearData()
+  //     : exampleActions.fetch()
+  // )
+
+  // console.log("ASD: ", moviesData.moviesList);
 
   return (
     <div css={styles.root}>
@@ -28,23 +45,18 @@ const Home: NextPage = () => {
 
       <div css={styles.body}>
         <Typography variant={'h1'} css={styles.heading}>
-          {'EcoPortal Coolmovies Test'}
-        </Typography>
-        <Typography variant={'subtitle1'} css={styles.subtitle}>
-          {`Thank you for taking the time to take our test. We really appreciate it. 
-        All the information on what is required can be found in the README at the root of this repo. 
-        Please don't spend ages on this and just get through as much of it as you can. 
-        Good luck! 😄`}
+          {'Coolmovies Reviews'}
         </Typography>
 
         <div css={styles.mainControls}>
-          <Link href="/reviews">
-            <Button
-              variant={'outlined'}
-            >
-              Go to movies reviews!
-            </Button>
-          </Link>
+
+        </div>
+        <div>
+          {
+            moviesData && moviesData.moviesList.map((data) => (
+              <MovieItem data={data} key={data.id} />
+            ))
+          }
         </div>
       </div>
     </div>
@@ -93,6 +105,7 @@ const styles = {
   }),
   dataInput: css({
     alignSelf: 'stretch',
+    width: "400px",
     margin: '32px 0',
   }),
 };

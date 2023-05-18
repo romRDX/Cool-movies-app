@@ -23,17 +23,20 @@ export const slice = createSlice({
         ...movieItem,
         reviews: movieItem.movieReviewsByMovieId.edges.map((reviewItem) => ({ ...reviewItem.node }))
       }))
-      console.log("ASD: ", normalizedData);
+      // console.log("ASD: ", normalizedData);
       state.moviesList = normalizedData;
     },
     loadError: (state) => {
       state.moviesList = ['Error Fetching :('];
     },
     addReview: (state, action: PayloadAction<{ data: unknown[] }>) => {
-
+      
     },
     editReview: (state, action: PayloadAction<{ data: unknown[] }>) => {
-
+      
+    },
+    test: (state, action: PayloadAction<{ data: any }>) => {
+      console.log("XZXX: ADD REVIEW");
     },
   },
 });

@@ -6,6 +6,7 @@ import Head from 'next/head';
 import { createStore } from '../redux';
 import { EnhancedStore } from '@reduxjs/toolkit';
 import { ApolloClient, InMemoryCache } from '@apollo/client';
+import useApolloClient from '../hooks/useApolloClient';
 
 const App: FC<AppProps> = ({ Component, pageProps }) => {
   const [store, setStore] = useState<EnhancedStore | null>(null);
@@ -15,6 +16,12 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
       uri: '/graphql',
     });
 
+    console.log("ASD1: ", client);
+
+    const x = useApolloClient();
+
+    console.log("ASD2: ", x);
+    
     const store = createStore({ epicDependencies: { client } });
     setStore(store);
   }, []);
